@@ -33,36 +33,49 @@ void buscarArtistaPorNome(Artista artistas[], int contagem_artistas) {
     fgets(buscaNome, sizeof(buscaNome), stdin);
     buscaNome[strcspn(buscaNome, "\n")] = 0;
 
-    for (int i = 0; i < strlen(buscaNome); i++) {
-        buscaNome[i] = tolower(buscaNome[i]);
+    char buscaNomeLowerCase[100];
+    strcpy(buscaNomeLowerCase, buscaNome);
+    for (int i = 0; i < strlen(buscaNomeLowerCase); i++) {
+        buscaNomeLowerCase[i] = tolower(buscaNomeLowerCase[i]);
     }
 
-    int indiceEncontrado = -1;
+    int encontrado = 0; 
+
     int baixo = 0, alto = contagem_artistas - 1, meio;
     while (baixo <= alto) {
         meio = (baixo + alto) / 2;
         char nomeArtista[100];
+
         strcpy(nomeArtista, artistas[meio].nome);
         for (int i = 0; i < strlen(nomeArtista); i++) {
             nomeArtista[i] = tolower(nomeArtista[i]);
         }
-        if (strcmp(nomeArtista, buscaNome) == 0) {
-            indiceEncontrado = meio;
-            break;
-        } else if (strcmp(nomeArtista, buscaNome) < 0) {
+
+        char *tokenBusca = strtok(buscaNomeLowerCase, " ");
+        int encontradoPartes = 1;
+        while (tokenBusca != NULL) {
+            if (strstr(nomeArtista, tokenBusca) == NULL) {
+                encontradoPartes = 0;
+                break;
+            }
+            tokenBusca = strtok(NULL, " ");
+        }
+
+        if (encontradoPartes) {
+            printf("\nArtista encontrado:\n");
+            printf("->Nome: %s\n", artistas[meio].nome);
+            printf("->Genero: %s\n", artistas[meio].genero);
+            printf("->Nacionalidade: %s\n", artistas[meio].nacionalidade);
+            printf("->Albuns:\n%s\n", artistas[meio].albuns);
+            encontrado = 1; 
+            break; 
+        } else if (strcmp(nomeArtista, buscaNomeLowerCase) < 0) {
             baixo = meio + 1;
         } else {
             alto = meio - 1;
         }
     }
-
-    if (indiceEncontrado != -1) {
-        printf("\nArtista encontrado:\n");
-        printf("->Nome: %s\n", artistas[indiceEncontrado].nome);
-        printf("->Genero: %s\n", artistas[indiceEncontrado].genero);
-        printf("->Nacionalidade: %s\n", artistas[indiceEncontrado].nacionalidade);
-        printf("->Albuns:\n%s\n", artistas[indiceEncontrado].albuns);
-    } else {
+    if (!encontrado) {
         printf("\nArtista não encontrado.\n");
     }
 }
