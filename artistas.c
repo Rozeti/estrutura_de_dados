@@ -27,6 +27,93 @@ void converterIniciaisParaMaiusculo(char *string) {
     }
 }
 
+void editarArtista(Artista artistas[], int contagem_artistas) {
+    char buscaNome[100];
+    printf("Digite o nome do artista que deseja editar: ");
+    fgets(buscaNome, sizeof(buscaNome), stdin);
+    buscaNome[strcspn(buscaNome, "\n")] = 0;
+    converterIniciaisParaMaiusculo(buscaNome);
+
+    int indiceEncontrado = -1;
+    for (int i = 0; i < contagem_artistas; i++) {
+        if (strcmp(artistas[i].nome, buscaNome) == 0) {
+            indiceEncontrado = i;
+            break;
+        }
+    }
+
+    if (indiceEncontrado == -1) {
+        printf("\nArtista nao encontrado.\n");
+        return;
+    }
+
+    printf("\nArtista encontrado:\n");
+    printf("->Nome: %s\n", artistas[indiceEncontrado].nome);
+    printf("->Genero: %s\n", artistas[indiceEncontrado].genero);
+    printf("->Nacionalidade: %s\n", artistas[indiceEncontrado].nacionalidade);
+    printf("->Albuns:\n%s\n", artistas[indiceEncontrado].albuns);
+
+    char escolha;
+    printf("\nO que deseja editar?\n");
+    printf("1. Nome\n");
+    printf("2. Genero\n");
+    printf("3. Nacionalidade\n");
+    printf("4. Albuns\n");
+    printf("Escolha uma opcao: ");
+    scanf(" %c", &escolha);
+
+    char novoValor[1000];
+    switch (escolha) {
+        case '1':
+            printf("Digite o novo nome: ");
+            getchar();
+            fgets(novoValor, sizeof(novoValor), stdin);
+            novoValor[strcspn(novoValor, "\n")] = 0;
+            for (int i = 0; i < strlen(novoValor); i++) {
+                if (i == 0 || novoValor[i - 1] == ' ') {
+                    novoValor[i] = toupper(novoValor[i]);
+                } else {
+                    novoValor[i] = tolower(novoValor[i]);
+                }
+            }
+            strcpy(artistas[indiceEncontrado].nome, novoValor);
+            break;
+        case '2':
+            printf("Digite o novo genero: ");
+            getchar();
+            fgets(novoValor, sizeof(novoValor), stdin);
+            novoValor[strcspn(novoValor, "\n")] = 0;
+            strcpy(artistas[indiceEncontrado].genero, novoValor);
+            break;
+        case '3':
+            printf("Digite a nova nacionalidade: ");
+            getchar();
+            fgets(novoValor, sizeof(novoValor), stdin);
+            novoValor[strcspn(novoValor, "\n")] = 0;
+            strcpy(artistas[indiceEncontrado].nacionalidade, novoValor);
+            break;
+        case '4':
+            printf("Digite os novos albuns (separe com virgulas): ");
+            getchar();
+            fgets(novoValor, sizeof(novoValor), stdin);
+            novoValor[strcspn(novoValor, "\n")] = 0;
+            strcpy(artistas[indiceEncontrado].albuns, "");
+            char *token = strtok(novoValor, ",");
+            strcpy(artistas[indiceEncontrado].albuns, token);
+            while ((token = strtok(NULL, ",")) != NULL) {
+                strcat(artistas[indiceEncontrado].albuns, "\n");
+                strcat(artistas[indiceEncontrado].albuns, token);
+            }
+            strcat(artistas[indiceEncontrado].albuns, "\n==========\n");
+            break;
+        default:
+            printf("Opcao invalida.\n");
+            return;
+    }
+
+    printf("\nAlteracoes aplicadas.\n");
+}
+
 void inserirNovoArtista(Artista artistas[], int *contagem_artistas) {
     Artista novoArtista;
     printf("Digite o nome do novo artista: ");
@@ -218,7 +305,6 @@ int main() {
         if (strlen(buffer) == 0) {
             continue;
         }
-
         if (strcmp(buffer, "==========") == 0) {
             strcat(artistas[contagem_artistas].albuns, "==========\n");
             contagem_artistas++;
@@ -235,7 +321,6 @@ int main() {
     }
 
     fclose(arquivo);
-
     qsort(artistas, contagem_artistas, sizeof(Artista), comparar);
 
     int escolha;
@@ -260,6 +345,7 @@ int main() {
                 removerArtista(artistas, &contagem_artistas);
                 break;
             case 3:
+                editarArtista(artistas, contagem_artistas);
                 break;
             case 4:
                 buscarArtistaPorNome(artistas, contagem_artistas);
@@ -285,8 +371,6 @@ int main() {
     }
 
     fclose(arquivo);
-
     printf("\nOrdenacao concluida e salva no arquivo.\n");
-
     return 0;
 }
