@@ -27,6 +27,40 @@ void converterIniciaisParaMaiusculo(char *string) {
     }
 }
 
+void buscarAlbum(Artista artistas[], int contagem_artistas) {
+    char buscaAlbum[100];
+    printf("Digite o nome do album que deseja buscar: ");
+    fgets(buscaAlbum, sizeof(buscaAlbum), stdin);
+    buscaAlbum[strcspn(buscaAlbum, "\n")] = 0;
+
+    for (int i = 0; i < strlen(buscaAlbum); i++) {
+        buscaAlbum[i] = tolower(buscaAlbum[i]);
+    }
+
+    int encontrado = 0; 
+    for (int i = 0; i < contagem_artistas; i++) {
+        char albunsLowerCase[1000]; 
+        strcpy(albunsLowerCase, artistas[i].albuns);
+        
+        for (int j = 0; j < strlen(albunsLowerCase); j++) {
+            albunsLowerCase[j] = tolower(albunsLowerCase[j]);
+        }
+
+        if (strstr(albunsLowerCase, buscaAlbum) != NULL) {
+            printf("\nResultado:\n");
+            printf("->Nome: %s\n", artistas[i].nome);
+            printf("->Genero: %s\n", artistas[i].genero);
+            printf("->Nacionalidade: %s\n", artistas[i].nacionalidade);
+            printf("->Albuns:\n%s\n", artistas[i].albuns);
+            encontrado = 1; 
+        }
+    }
+
+    if (!encontrado) {
+        printf("\nNenhum resultado encontrado para '%s'.\n", buscaAlbum);
+    }
+}
+
 void removerArtista(Artista artistas[], int *contagem_artistas) {
     char buscaNome[100];
     printf("Digite o nome do artista que deseja remover: ");
@@ -131,6 +165,7 @@ int main() {
             case 4:
                 break;
             case 5:
+                buscarAlbum(artistas, contagem_artistas);
                 break;
             case 0:
                 break;
