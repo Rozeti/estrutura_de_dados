@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "artistas.h"
 
 typedef struct {
     char nome[100];
