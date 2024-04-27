@@ -16,6 +16,17 @@ int comparar(const void *a, const void *b) {
     return strcmp(artistaA->nome, artistaB->nome);
 }
 
+void converterIniciaisParaMaiusculo(char *string) {
+    int tamanho = strlen(string);
+    for (int i = 0; i < tamanho; i++) {
+        if (i == 0 || string[i - 1] == ' ') {
+            string[i] = toupper(string[i]);
+        } else {
+            string[i] = tolower(string[i]);
+        }
+    }
+}
+
 int main() {
     FILE *arquivo = fopen("artistas.txt", "r");
     if (arquivo == NULL) {
