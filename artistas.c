@@ -27,6 +27,49 @@ void converterIniciaisParaMaiusculo(char *string) {
     }
 }
 
+void removerArtista(Artista artistas[], int *contagem_artistas) {
+    char buscaNome[100];
+    printf("Digite o nome do artista que deseja remover: ");
+    fgets(buscaNome, sizeof(buscaNome), stdin);
+    buscaNome[strcspn(buscaNome, "\n")] = 0;
+
+    int indiceEncontrado = -1;
+    for (int i = 0; i < *contagem_artistas; i++) {
+        if (strcmp(artistas[i].nome, buscaNome) == 0) {
+            indiceEncontrado = i;
+            break;
+        }
+    }
+
+    if (indiceEncontrado == -1) {
+        printf("Artista nao encontrado.\n");
+        return;
+    }
+
+    printf("Artista encontrado:\n");
+    printf("->Nome: %s\n", artistas[indiceEncontrado].nome);
+    printf("->Genero: %s\n", artistas[indiceEncontrado].genero);
+    printf("->Nacionalidade: %s\n", artistas[indiceEncontrado].nacionalidade);
+    printf("->Albuns:\n%s\n", artistas[indiceEncontrado].albuns);
+
+    char escolha;
+    printf("Deseja remover este artista? (s/n): ");
+    scanf(" %c", &escolha);
+
+    if (escolha == 's' || escolha == 'S') {
+        for (int i = indiceEncontrado; i < *contagem_artistas - 1; i++) {
+            strcpy(artistas[i].nome, artistas[i + 1].nome);
+            strcpy(artistas[i].genero, artistas[i + 1].genero);
+            strcpy(artistas[i].nacionalidade, artistas[i + 1].nacionalidade);
+            strcpy(artistas[i].albuns, artistas[i + 1].albuns);
+        }
+        (*contagem_artistas)--;
+        printf("Artista removido com sucesso.\n");
+    } else {
+        printf("Operacao cancelada.\n");
+    }
+}
+
 int main() {
     FILE *arquivo = fopen("artistas.txt", "r");
     if (arquivo == NULL) {
@@ -81,6 +124,7 @@ int main() {
             case 1:
                 break;
             case 2:
+                removerArtista(artistas, &contagem_artistas);
                 break;
             case 3:
                 break;
