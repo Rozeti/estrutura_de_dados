@@ -27,6 +27,50 @@ void converterIniciaisParaMaiusculo(char *string) {
     }
 }
 
+void inserirNovoArtista(Artista artistas[], int *contagem_artistas) {
+    Artista novoArtista;
+    printf("Digite o nome do novo artista: ");
+    fgets(novoArtista.nome, sizeof(novoArtista.nome), stdin);
+    printf("Digite o genero musical: ");
+    fgets(novoArtista.genero, sizeof(novoArtista.genero), stdin);
+    printf("Digite a nacionalidade: ");
+    fgets(novoArtista.nacionalidade, sizeof(novoArtista.nacionalidade), stdin);
+
+    novoArtista.nome[strcspn(novoArtista.nome, "\n")] = 0;
+    novoArtista.genero[strcspn(novoArtista.genero, "\n")] = 0;
+    novoArtista.nacionalidade[strcspn(novoArtista.nacionalidade, "\n")] = 0;
+
+    for (int i = 0; i < strlen(novoArtista.nome); i++) {
+        if (i == 0 || novoArtista.nome[i - 1] == ' ') {
+            novoArtista.nome[i] = toupper(novoArtista.nome[i]);
+        } else {
+            novoArtista.nome[i] = tolower(novoArtista.nome[i]);
+        }
+    }
+
+    strcpy(artistas[*contagem_artistas].nome, novoArtista.nome);
+    strcpy(artistas[*contagem_artistas].genero, novoArtista.genero);
+    strcpy(artistas[*contagem_artistas].nacionalidade, novoArtista.nacionalidade);
+
+    int numAlbuns;
+    printf("Quantos albuns deseja inserir para este artista? ");
+    scanf("%d", &numAlbuns);
+    getchar();
+
+    printf("Digite os albuns do artista (um por linha):\n");
+    char album[100];
+    strcpy(artistas[*contagem_artistas].albuns, "");
+    for (int i = 0; i < numAlbuns; i++) {
+        printf("Album %d: ", i + 1);
+        fgets(album, sizeof(album), stdin);
+        album[strcspn(album, "\n")] = 0;
+        strcat(artistas[*contagem_artistas].albuns, album);
+        strcat(artistas[*contagem_artistas].albuns, "\n");
+    }
+    strcat(artistas[*contagem_artistas].albuns, "==========\n");
+    (*contagem_artistas)++;
+}
+
 void buscarArtistaPorNome(Artista artistas[], int contagem_artistas) {
     char buscaNome[100];
     printf("Digite o nome do artista que deseja buscar: ");
@@ -209,6 +253,8 @@ int main() {
 
         switch (escolha) {
             case 1:
+                inserirNovoArtista(artistas, &contagem_artistas);
+                qsort(artistas, contagem_artistas, sizeof(Artista), comparar);
                 break;
             case 2:
                 removerArtista(artistas, &contagem_artistas);
@@ -224,8 +270,23 @@ int main() {
             case 0:
                 break;
             default:
+                printf("\nOpcao invalida. Por favor, tente novamente.\n");
         }
     } while (escolha != 0);
+
+    arquivo = fopen("artistas.txt", "w");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo de saida.\n");
+        return 1;
+    }
+
+    for (int i = 0; i < contagem_artistas; i++) {
+        fprintf(arquivo, "%s\n%s\n%s\n%s", artistas[i].nome, artistas[i].genero, artistas[i].nacionalidade, artistas[i].albuns);
+    }
+
+    fclose(arquivo);
+
+    printf("\nOrdenacao concluida e salva no arquivo.\n");
 
     return 0;
 }
