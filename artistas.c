@@ -27,6 +27,46 @@ void converterIniciaisParaMaiusculo(char *string) {
     }
 }
 
+void buscarArtistaPorNome(Artista artistas[], int contagem_artistas) {
+    char buscaNome[100];
+    printf("Digite o nome do artista que deseja buscar: ");
+    fgets(buscaNome, sizeof(buscaNome), stdin);
+    buscaNome[strcspn(buscaNome, "\n")] = 0;
+
+    for (int i = 0; i < strlen(buscaNome); i++) {
+        buscaNome[i] = tolower(buscaNome[i]);
+    }
+
+    int indiceEncontrado = -1;
+    int baixo = 0, alto = contagem_artistas - 1, meio;
+    while (baixo <= alto) {
+        meio = (baixo + alto) / 2;
+        char nomeArtista[100];
+        strcpy(nomeArtista, artistas[meio].nome);
+        for (int i = 0; i < strlen(nomeArtista); i++) {
+            nomeArtista[i] = tolower(nomeArtista[i]);
+        }
+        if (strcmp(nomeArtista, buscaNome) == 0) {
+            indiceEncontrado = meio;
+            break;
+        } else if (strcmp(nomeArtista, buscaNome) < 0) {
+            baixo = meio + 1;
+        } else {
+            alto = meio - 1;
+        }
+    }
+
+    if (indiceEncontrado != -1) {
+        printf("\nArtista encontrado:\n");
+        printf("->Nome: %s\n", artistas[indiceEncontrado].nome);
+        printf("->Genero: %s\n", artistas[indiceEncontrado].genero);
+        printf("->Nacionalidade: %s\n", artistas[indiceEncontrado].nacionalidade);
+        printf("->Albuns:\n%s\n", artistas[indiceEncontrado].albuns);
+    } else {
+        printf("\nArtista não encontrado.\n");
+    }
+}
+
 void buscarAlbum(Artista artistas[], int contagem_artistas) {
     char buscaAlbum[100];
     printf("Digite o nome do album que deseja buscar: ");
@@ -163,6 +203,7 @@ int main() {
             case 3:
                 break;
             case 4:
+                buscarArtistaPorNome(artistas, contagem_artistas);
                 break;
             case 5:
                 buscarAlbum(artistas, contagem_artistas);
